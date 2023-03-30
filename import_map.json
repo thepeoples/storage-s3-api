@@ -1,5 +1,8 @@
 {
   "imports": {
+    "$gql/": "https://deno.land/x/gql@1.1.2/",
+    "$gqlTag/": "https://deno.land/x/graphql_tag@0.0.1/",
+    "$gqlTools/": "https://deno.land/x/graphql_tools@0.0.2/",
     "$oak/": "https://deno.land/x/oak@v12.1.0/",
     "$std/": "https://deno.land/std@v0.181.0/"
   }

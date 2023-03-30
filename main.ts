@@ -3,9 +3,19 @@
 import {Application, Context} from "$oak/mod.ts";
 import router from "./routes.ts";
 
+// Create new application
 const app = new Application();
+
+// Handle the router's configured routes
 app.use(router.allowedMethods());
 app.use(router.routes());
+
+// Handle request logging
+app.use(async (ctx, next) => {
+    await next();
+    const rt = ctx.response.headers.get("X-Response-Time");
+    console.log(`${ctx.request.method} ${ctx.request.url} - ${rt}`);
+});
 
 // Handle 404, when there is no middleware registered to process the incoming request
 app.use((ctx: Context) => {
@@ -23,12 +33,15 @@ app.use(async (ctx: Context, next: Function) => {
     }
 });
 
+// Catch process interrupt and terminate signals
 Deno.addSignalListener("SIGTERM", () => {
-    console.log("Aborting for SIGTERM");
+    console.log("Aborting for SIGTERM...");
+    Deno.exit(0);
 });
 
 Deno.addSignalListener("SIGINT", () => {
-    console.log("Aborting for SIGINT");
+    console.log("Aborting for SIGINT...");
+    Deno.exit(0);
 });
 
 console.log("Listening on port 8000...");
