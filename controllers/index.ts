@@ -1,5 +1,6 @@
 import {Context} from "$oak/mod.ts";
+import {GetIndexResponse} from "../models/index.ts";
 
 export async function getIndex(ctx: Context) {
-    ctx.response.body = {msg: "storage-s3-api"};
+    ctx.response.body = new GetIndexResponse();
 }

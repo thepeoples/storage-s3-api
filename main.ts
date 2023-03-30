@@ -6,16 +6,21 @@ import router from "./routes.ts";
 // Create new application
 const app = new Application();
 
+// Handle request logging
+app.use(async (ctx, next) => {
+    const start = Date.now();
+    await next();
+    
+    const responseTime = (Date.now() - start) + "ms";
+    const url = ctx.request.url;
+
+    ctx.response.headers.set("X-Response-Time", responseTime);
+    console.log(`${ctx.request.method} ${url.protocol}//${url.host}${url.pathname} - ${responseTime}`);
+});
+
 // Handle the router's configured routes
 app.use(router.allowedMethods());
 app.use(router.routes());
-
-// Handle request logging
-app.use(async (ctx, next) => {
-    await next();
-    const rt = ctx.response.headers.get("X-Response-Time");
-    console.log(`${ctx.request.method} ${ctx.request.url} - ${rt}`);
-});
 
 // Handle 404, when there is no middleware registered to process the incoming request
 app.use((ctx: Context) => {
@@ -35,12 +40,12 @@ app.use(async (ctx: Context, next: Function) => {
 
 // Catch process interrupt and terminate signals
 Deno.addSignalListener("SIGTERM", () => {
-    console.log("Aborting for SIGTERM...");
+    console.log("Aborting for SIGTERM...\n");
     Deno.exit(0);
 });
 
 Deno.addSignalListener("SIGINT", () => {
-    console.log("Aborting for SIGINT...");
+    console.log("Aborting for SIGINT...\n");
     Deno.exit(0);
 });
 
